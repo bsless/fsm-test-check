@@ -33,10 +33,11 @@
   [cmd-seq state-seq commands]
   (letfn [(shrink-subseq [s]
             (when (seq s)
-              [(map #(get cmd-seq %) s)
+              (rose/make-rose
+               (map #(get cmd-seq %) s)
                (->> (remove-seq s)
                     (filter (partial valid-sequence? commands state-seq cmd-seq))
-                    (mapv shrink-subseq))]))]
+                    (mapv shrink-subseq)))))]
     (shrink-subseq (range 0 (count cmd-seq)))))
 
 (defn cmd-seq-helper
