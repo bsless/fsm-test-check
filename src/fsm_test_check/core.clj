@@ -49,7 +49,7 @@
               (if (zero? size)
                 (gen/return [[cmd state]])
                 (gen/fmap
-                 (partial concat [[cmd state]])
+                 (fn [xs] (cons [cmd state] xs))
                  (cmd-seq-helper (exec (get commands (:type cmd)) state cmd)
                                  commands
                                  (dec size)))))))
