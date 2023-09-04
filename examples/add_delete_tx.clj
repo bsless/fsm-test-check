@@ -23,14 +23,13 @@
                                    (conj people
                                          (dissoc cmd :type)))))
 
-    (generate [_ state]
-          (gen/fmap (partial zipmap [:type :name :id])
-                    (gen/tuple (gen/return :add-cmd)
-                               (gen/not-empty gen/string-alphanumeric)
-                               (gen/such-that #(-> (mapv :id (:people state))
-                                                   (contains? %)
-                                                   not)
-                                              gen/int))))))
+    (generate [_ {:keys [people]}]
+      (let [ids (into #{} (map :id) people)]
+        (gen/fmap (partial zipmap [:type :name :id])
+                  (gen/tuple (gen/return :add-cmd)
+                             (gen/not-empty gen/string-alphanumeric)
+                             (gen/such-that #(not (ids %))
+                                            gen/int)))))))
 
 (def delete-cmd
   (reify
