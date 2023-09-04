@@ -40,9 +40,10 @@
 (defn cmd-seq-helper
   [state commands size]
   (gen/bind (gen/one-of (into []
-                              (comp (map second)
-                                 (filter #(precondition % state))
-                                 (map #(generate % state)))
+                              (comp
+                               (map second)
+                               (filter #(precondition % state))
+                               (map #(generate % state)))
                               commands))
             (fn [cmd]
               (if (zero? size)
