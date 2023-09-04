@@ -5,6 +5,13 @@
    [clojure.test.check.properties :as prop]
    [fsm-test-check.core :as fsm]))
 
+(defmacro map-gen
+  "hash map gen"
+  [& kvs]
+  (let [ks (vec (take-nth 2 kvs))
+        vs (take-nth 2 (rest kvs))]
+    `(gen/fmap #(zipmap ~ks %) (gen/tuple ~@vs))))
+
 (def add-cmd
   (reify
     fsm/Command
@@ -25,11 +32,10 @@
 
     (generate [_ {:keys [people]}]
       (let [ids (into #{} (map :id) people)]
-        (gen/fmap (partial zipmap [:type :name :id])
-                  (gen/tuple (gen/return :add-cmd)
-                             (gen/not-empty gen/string-alphanumeric)
-                             (gen/such-that #(not (ids %))
-                                            gen/small-integer)))))))
+        (map-gen
+         :type (gen/return :add-cmd)
+         :name (gen/not-empty gen/string-alphanumeric)
+         :id (gen/such-that #(not (ids %)) gen/small-integer))))))
 
 (def delete-cmd
   (reify
@@ -48,9 +54,9 @@
                               (filterv #(not= (:id %) (:id cmd)) people))))
 
     (generate [_ state]
-      (gen/fmap (partial zipmap [:type :id])
-                (gen/tuple (gen/return :delete-cmd)
-                           (gen/elements (mapv :id (:people state))))))))
+      (map-gen
+        :type (gen/return :delete-cmd)
+        :id (gen/elements (mapv :id (:people state)))))))
 
 ;;-----------------------------------------------------
 ;;property definition
