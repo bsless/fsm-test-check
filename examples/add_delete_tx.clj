@@ -19,9 +19,9 @@
            nil?))
 
     (exec [_ state cmd]
-      (update-in state [:people] (fn [people]
-                                   (conj people
-                                         (dissoc cmd :type)))))
+      (update state :people (fn [people]
+                              (conj people
+                                    (dissoc cmd :type)))))
 
     (generate [_ {:keys [people]}]
       (let [ids (into #{} (map :id) people)]
@@ -44,10 +44,8 @@
            seq))
 
     (exec [_ state cmd]
-      (update-in state [:people] (fn [people]
-                                   (vec (filter #(not= (:id %)
-                                                       (:id cmd))
-                                                people)))))
+      (update state :people (fn [people]
+                              (filterv #(not= (:id %) (:id cmd)) people))))
 
     (generate [_ state]
       (gen/fmap (partial zipmap [:type :id])

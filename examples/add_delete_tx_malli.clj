@@ -19,9 +19,9 @@
            nil?))
 
     (exec [_ state cmd]
-      (update-in state [:people] (fn [people]
-                                   (conj people
-                                         (dissoc cmd :type)))))
+      (update state :people (fn [people]
+                              (conj people
+                                    (dissoc cmd :type)))))
 
     (generate [_ {:keys [people]}]
       (mg/generator
@@ -45,10 +45,8 @@
            seq))
 
     (exec [_ state cmd]
-      (update-in state [:people] (fn [people]
-                                   (vec (filter #(not= (:id %)
-                                                       (:id cmd))
-                                                people)))))
+      (update state :people (fn [people]
+                              (filterv #(not= (:id %) (:id cmd)) people))))
 
     (generate [_ state]
       (mg/generator
