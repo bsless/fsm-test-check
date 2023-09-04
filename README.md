@@ -1,14 +1,12 @@
 # fsm-test-check
 
-A Clojure library designed to ... well, that part is up to you.
+A tiny library for Finite State Machine testing with Clojure test.check. Define `Commands` and when can they be applied, and the library gives you a generator for a sequence of these.
 
 ## Usage
 
-FIXME
+[See the inline example](https://github.com/bsless/fsm-test-check/blob/master/src/fsm_test_check/core.clj#L69-L137C23).
 
 ## License
-
-Copyright © 2015 FIXME
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
