@@ -22,28 +22,28 @@
                      (first state-seq)
                      sub-seq-idxs))))
 
-(defn remove-seq
-  [s]
-  (map-indexed (fn [index _]
-                 (#'clojure.test.check.rose-tree/exclude-nth index s))
-               s))
-
 (defn shrink-sequence
   [cmd-seq state-seq commands]
-  (letfn [(shrink-subseq [s]
-            (when (seq s)
+  (letfn [(shrink-subseq [idxs]
+            (when (seq idxs)
               (rose/make-rose
-               (map #(get cmd-seq %) s)
-               (->> (remove-seq s)
-                    (filter (partial valid-sequence? commands state-seq cmd-seq))
-                    (mapv shrink-subseq)))))]
+               (map #(nth cmd-seq %) idxs)
+               (into
+                []
+                (comp
+                 (map (fn [^long i] (filterv (fn [^long j] (if (= i j) false true)) idxs)))
+                 (filter (partial valid-sequence? commands state-seq cmd-seq))
+                 (map shrink-subseq))
+                idxs))))]
     (shrink-subseq (range 0 (count cmd-seq)))))
 
 (defn cmd-seq-helper
   [state commands size]
-  (gen/bind (gen/one-of (->> (map second commands)
-                             (filter #(precondition % state))
-                             (map #(generate % state))))
+  (gen/bind (gen/one-of (into []
+                              (comp (map second)
+                                 (filter #(precondition % state))
+                                 (map #(generate % state)))
+                              commands))
             (fn [cmd]
               (if (zero? size)
                 (gen/return [[cmd state]])
