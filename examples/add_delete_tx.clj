@@ -29,7 +29,7 @@
                   (gen/tuple (gen/return :add-cmd)
                              (gen/not-empty gen/string-alphanumeric)
                              (gen/such-that #(not (ids %))
-                                            gen/int)))))))
+                                            gen/small-integer)))))))
 
 (def delete-cmd
   (reify
