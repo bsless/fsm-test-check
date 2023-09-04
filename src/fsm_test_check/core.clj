@@ -13,8 +13,8 @@
 (defn valid-sequence?
   [commands state-seq cmd-seq sub-seq-idxs]
   (when (seq sub-seq-idxs)
-    (map? (reduce (fn [curr-state state-idx]
-                       (let [cmd (get cmd-seq state-idx)
+    (map? (reduce (fn [curr-state ^long state-idx]
+                       (let [cmd (nth cmd-seq state-idx)
                              command (get commands (:type cmd))]
                          (if (postcondition command curr-state cmd)
                            (exec command curr-state cmd)
